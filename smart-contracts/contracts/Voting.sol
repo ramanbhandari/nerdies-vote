@@ -37,7 +37,7 @@ contract Voting {
     }
 
     // checks if user has voted
-    function checkVoterStatus() public view return (bool) {
+    function checkVoterStatus(bytes32 voterHash) public view returns (bool) {
         return hasVoted[voterHash];
     }
 
@@ -45,15 +45,15 @@ contract Voting {
     function vote(uint candidateId, bytes32 voterHash) public {
         require(isEligible[voterHash], "Already Registered");
         require(!hasVoted[voterHash], "Already Voted");
-
-        // needs validate candidateId validation
+        require(candidateId > 0 && candidateId <= candidatesCount, "Invalid candidate ID");
+        
         candidates[candidateId].voteCount++;
         hasVoted[voterHash] = true;
         emit VoteCasted(candidateId, voterHash);
     }
 
     // to check if the user Voter Hash is valid
-    function getVoter(bytes32 voterHash) public view return (bool) {
+    function getVoter(bytes32 voterHash) public view returns (bool) {
         return isEligible[voterHash];
     }
 
