@@ -50,3 +50,21 @@ Whats practical? its more cost effective to manipulate elections intecepting the
   - real-time tallying of votes for each candidate, should provide transparent way to check vote counts
 
 ## Database
+
+## User Identification
+
+Database we have for users eligible to Vote
+[User's Name, User's DOB, Place of Birth, User's SIN, User's Mobile Number, User's Email]
+
+Identity Verification
+They have to create an account with:
+[User's Name, User's DOB, Place of Birth, User's SIN, User's Mobile Number, User's Email]
+They choose to get OTP either on Mobile or Email. Once OTP is validated, we know this user is legit.
+Extra question to create a Voter ID Hash -
+Set Password, and 3 Security Questions and their answers.
+
+Then Hash - [User's Name, User's DOB, Place of Birth, User's SIN, User's Mobile Number, User's Email, Password, Security Question1, Answer1, Security Question2, Answer2, Security Question3, Answer3] -> Voter ID Hash -> This user is now registered, put it on the block (Voter ID Hash + Nonce -> Hashed) and Voted (Yes/No)
+
+Whenever user is voting, we create a Hash using the Voter ID Hash + Nonce (which is stored on our end) and check if that hash hasn't voted, then update Voted on the block transaction saying this person voted.
+
+Nonce creation in Solidity - keccak256()
