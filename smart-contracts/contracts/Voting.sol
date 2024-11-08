@@ -43,7 +43,7 @@ contract Voting {
 
     // to vote - increase Candidates votecount++
     function vote(uint candidateId, bytes32 voterHash) public {
-        require(isEligible[voterHash], "Already Registered");
+        require(isEligible[voterHash], "Voter Not Registered");
         require(!hasVoted[voterHash], "Already Voted");
         require(candidateId > 0 && candidateId <= candidatesCount, "Invalid candidate ID");
         
