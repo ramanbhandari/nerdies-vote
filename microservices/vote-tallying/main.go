@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// set up the handler
-	countHandler := handlers.NewVoterHandler(client, auth)
+	countHandler := handlers.NewCountHandler(client, auth)
 
 	http.HandleFunc("/voteCount", countHandler.CountHandler)
 
