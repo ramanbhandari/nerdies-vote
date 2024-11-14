@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -35,19 +36,25 @@ func (vh *VoterHandler) RegisterVoterHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	log.Println(r.Body);
-
-	// Decode request body
+	// decode request body
 	var voterData struct {
-		VoterInfo string `json:"voterInfo"`
+		FirstName string `json:"firstName"`
+		LastName  string `json:"lastName"`
+		Age       int    `json:"age"`
+		Address   string `json:"address"`
 	}
+
 	if err := json.NewDecoder(r.Body).Decode(&voterData); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
+	// Concatenate voter information into a single string
+	data := fmt.Sprintf("%s:%s:%d:%s", voterData.FirstName, voterData.LastName, voterData.Age, voterData.Address)
 	// generate voter hash
-	voteHash := sha256.Sum256([]byte(voterData.VoterInfo))
+	voteHash := sha256.Sum256([]byte(data))
+
+	log.Println("VoterID created", voteHash)
 
 
 	// get the deployed contract instance 
@@ -73,14 +80,26 @@ func (vh *VoterHandler) RegisterVoterHandler(w http.ResponseWriter, r *http.Requ
 		log.Fatalf("Failed to get transaction receipt: %v", err)
 	}
 
-	//check the logs 
-    log.Println("Voter Reg receipt:", receipt.Logs[0])
+	eventEmitted := false;
+	// Loop over each log in the transaction receipt to find emitted event 
+	for _, tLog := range receipt.Logs {
 
-	//the logs need to be unpacked <- working on this
+		//this will parse only the log(event) that is VoterRegistered else err, like checking the event name
+		registrationEvent, err := instance.ParseVoterRegistered(*tLog)
+		if err == nil {
+			log.Println("Event Emitted: VoterRegistered")
+			// log.Println("Event Emitted: VoterRegistered", registrationEvent.VoterHash, voteHash)
+
+			//the event is emitted check if the voter hashes match 
+			eventEmitted = registrationEvent.VoterHash == voteHash;
+		}
+	}
+
+	log.Println("Event emitted?", eventEmitted)
 
 	// send response
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"transactionHash": result.Hash().Hex()})
+	json.NewEncoder(w).Encode(map[string]bool{"eventSuccess": eventEmitted})
 }
 
 
