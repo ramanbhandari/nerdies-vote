@@ -18,7 +18,7 @@ type CountHandler struct {
 	auth   *bind.TransactOpts
 }
 
-func NewVoterHandler(client *ethclient.Client, auth *bind.TransactOpts) *CountHandler {
+func NewCountHandler(client *ethclient.Client, auth *bind.TransactOpts) *CountHandler {
 	return &CountHandler{
 		client: client,
 		auth:   auth,

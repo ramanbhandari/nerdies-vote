@@ -1,7 +1,7 @@
 Smart Contract 
 ======================
 
-The smart contract Voting is developed using the Truffle framework and tested locally using Ganache. Follow these steps to set up, test, and migrate the contract.
+The smart contract Voting is developed using the Truffle framework and tested/deployed locally using Ganache. Follow these steps to set up, test, and migrate the contract.
 
 Prerequisites
 -------------
@@ -39,6 +39,8 @@ Getting Started
     `truffle migrate --network development`
 
     This will compile and deploy the contracts to the local Ganache blockchain.
+
+    Note the contract address once the migration is successful
 
 6.  **Run tests**:
 
